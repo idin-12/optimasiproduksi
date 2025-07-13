@@ -96,4 +96,8 @@ if st.button("🚀 Hitung Solusi Optimal"):
         st.pyplot(plt)
 
     else:
-        st
+        st.info("ℹ️ Visualisasi area feasible hanya tersedia untuk 2 produk. Untuk lebih dari 2 produk, solusi optimal ditampilkan tanpa grafik.")
+
+# ===============================
+# Footer
+st.markdown("---")
