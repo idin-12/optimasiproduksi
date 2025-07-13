@@ -10,7 +10,7 @@ st.set_page_config(page_title="Optimasi Produksi", page_icon="📈", layout="cen
 # ===============================
 # Sidebar untuk inputan
 st.sidebar.title("🔧 Input Parameter")
-num_products = st.sidebar.number_input("Jumlah Produk", min_value=2, max_value=1000, value=2)
+num_products = st.sidebar.number_input("Jumlah Produk", min_value=2, max_value=10000, value=2)
 
 st.sidebar.markdown("### 💰 Keuntungan per Unit Produk")
 profit = []
@@ -51,46 +51,22 @@ if st.button("🚀 Hitung Solusi Optimal"):
 
     if res.success:
         st.success("✅ Solusi Optimal Ditemukan!")
-        col1, col2 = st.columns(2)
-        produksi = []
-        keuntungan_per_produk = []
-        with col1:
-            total_profit = 0
-            for i, x in enumerate(res.x):
-                prod_profit = x * profit[i]
-                total_profit += prod_profit
-                produksi.append(x)
-                keuntungan_per_produk.append(prod_profit)
-                st.write(f"**Produksi Produk {i+1}** = {x:.2f} unit")
-                st.write(f"🔹 *Keuntungan Produk {i+1}* = {prod_profit:.2f}")
-        with col2:
-            st.metric(label="💲 **Keuntungan Maksimum**", value=f"{(-res.fun):.2f}")
+        total_profit = 0
+        for i, x in enumerate(res.x):
+            prod_profit = x * profit[i]
+            total_profit += prod_profit
+            st.write(f"**Produksi Produk {i+1}** = {x:.2f} unit")
+            st.write(f"🔹 *Keuntungan Produk {i+1}* = {prod_profit:.2f}")
 
-        # ===============================
-        # Grafik batang keuntungan semua produk
-        st.markdown("### 📊 Grafik Keuntungan per Produk")
-        plt.figure(figsize=(max(10, num_products * 0.3), 6))  # menyesuaikan lebar grafik dengan jumlah produk
-        produk_labels = [f"Produk {i+1}" for i in range(num_products)]
-        bars = plt.bar(produk_labels, keuntungan_per_produk, color='skyblue')
-        plt.xlabel("Produk")
-        plt.ylabel("Keuntungan")
-        plt.title("Keuntungan per Produk")
-
-        # Menambahkan label unit produksi di atas setiap bar
-        for bar, unit in zip(bars, produksi):
-            yval = bar.get_height()
-            plt.text(bar.get_x() + bar.get_width()/2.0, yval, f"{unit:.2f} unit", ha='center', va='bottom', fontsize=8, rotation=90)
-
-        plt.xticks(rotation=90)
-        plt.tight_layout()
-        st.pyplot(plt)
+        st.metric(label="💲 **Keuntungan Maksimum**", value=f"{(-res.fun):.2f}")
 
     else:
         st.error("❌ Tidak ada solusi feasible. Periksa kembali input kendala dan keuntungan.")
 
     # ===============================
-    # Visualisasi area feasible (hanya untuk 2 produk)
+    # Visualisasi area feasible dan solusi optimal
     if num_products == 2:
+        st.markdown("### 📊 Visualisasi Area Feasible dan Solusi Optimal (2 Produk)")
         x = np.linspace(0, max(b)*1.2, 400)
         plt.figure(figsize=(8,6))
 
@@ -119,6 +95,5 @@ if st.button("🚀 Hitung Solusi Optimal"):
 
         st.pyplot(plt)
 
-# ===============================
-# Footer
-st.markdown("---")
+    else:
+        st
