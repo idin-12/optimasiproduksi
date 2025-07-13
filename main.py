@@ -61,4 +61,64 @@ if st.button("🚀 Hitung Solusi Optimal"):
                 total_profit += prod_profit
                 produksi.append(x)
                 keuntungan_per_produk.append(prod_profit)
-                st.write(f"**Produksi Produk {**
+                st.write(f"**Produksi Produk {i+1}** = {x:.2f} unit")
+                st.write(f"🔹 *Keuntungan Produk {i+1}* = {prod_profit:.2f}")
+        with col2:
+            st.metric(label="💲 **Keuntungan Maksimum**", value=f"{(-res.fun):.2f}")
+
+        # ===============================
+        # Grafik batang keuntungan semua produk
+        st.markdown("### 📊 Grafik Keuntungan per Produk")
+        plt.figure(figsize=(max(10, num_products * 0.3), 6))  # menyesuaikan lebar grafik dengan jumlah produk
+        produk_labels = [f"Produk {i+1}" for i in range(num_products)]
+        bars = plt.bar(produk_labels, keuntungan_per_produk, color='skyblue')
+        plt.xlabel("Produk")
+        plt.ylabel("Keuntungan")
+        plt.title("Keuntungan per Produk")
+
+        # Menambahkan label unit produksi di atas setiap bar
+        for bar, unit in zip(bars, produksi):
+            yval = bar.get_height()
+            plt.text(bar.get_x() + bar.get_width()/2.0, yval, f"{unit:.2f} unit", ha='center', va='bottom', fontsize=8, rotation=90)
+
+        plt.xticks(rotation=90)
+        plt.tight_layout()
+        st.pyplot(plt)
+
+    else:
+        st.error("❌ Tidak ada solusi feasible. Periksa kembali input kendala dan keuntungan.")
+
+    # ===============================
+    # Visualisasi area feasible (hanya untuk 2 produk)
+    if num_products == 2:
+        x = np.linspace(0, max(b)*1.2, 400)
+        plt.figure(figsize=(8,6))
+
+        for i in range(num_constraints):
+            if A[i,1] != 0:
+                y = (b[i] - A[i,0]*x) / A[i,1]
+                y = np.maximum(0, y)
+                plt.plot(x, y, label=f'Kendala {i+1}')
+                plt.fill_between(x, 0, y, alpha=0.1)
+            else:
+                # Jika koefisien produk 2 = 0 (vertical line)
+                x_line = b[i]/A[i,0]
+                plt.axvline(x=x_line, label=f'Kendala {i+1}', alpha=0.5)
+
+        plt.xlabel('Produk 1')
+        plt.ylabel('Produk 2')
+        plt.title('📊 Area Feasible dan Solusi Optimal')
+        plt.legend()
+        plt.xlim(0, max(b)*1.2)
+        plt.ylim(0, max(b)*1.2)
+        plt.grid(True)
+
+        if res.success:
+            plt.scatter(res.x[0], res.x[1], color='red', label='Solusi Optimal')
+            plt.legend()
+
+        st.pyplot(plt)
+
+# ===============================
+# Footer
+st.markdown("---")
