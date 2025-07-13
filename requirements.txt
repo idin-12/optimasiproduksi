@@ -1,0 +1,8 @@
+
+streamlit
+numpy
+sympy
+matplotlib
+plotly
+scipy
+pulp
